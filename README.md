@@ -1,5 +1,5 @@
 # data-x
-A natural template engine language agnostic
+A `html` natural template engine language agnostic
 
 ## Examples
 In all examples the json is stored in a `data.json` file
@@ -195,7 +195,7 @@ In our example `loader` should be invoked to resolve `data.json`
  - `config` is the object with the engine configuration. The defaults should
 be just like the definition in section Config
 
-### filter(name: String, filter(data: String, arg: [String]))
+### filter(name: String, filter(data: String, args: [String]))
  - `name` is the name of filter, it would be nice to allow users redefine a
 filter using it old definition. 
  - `filter` is a function that take the data passed to filter and an array of
@@ -204,12 +204,33 @@ extra arguments and should respond the new data.
 ## Filters
 Any implementation should implement all this filters for a given `data` input
 
-### has -> Boolean
+### has (Any -> Boolean)
  - `data` is an `array` or `string` should resolve `true` if not empty `false` otherwise
  - `data` is `null` should resove `false`
  - `data` is `object` empty or not should always resolve `true`
  - `data` is `boolean` should resolve itself
  - `data` is number should resolve `false` if `zero`, `true` otherwise
 
-### not -> Boolean
+### not (Any -> Boolean)
  - apply `has` on `data` and negate it
+
+### is [type] (Any [String] -> Boolean)
+ - check if `data` is of the given `type` in `args`
+
+### eq [value] (Any [Any] -> Boolean)
+ - check if `data` is equals `value`
+
+### ne [value] (Any [Any] -> Boolean)
+ - check if `data` is not equals `value`
+
+### gt [value] (Any [Any] -> Boolean)
+ - check if `data` is greater than `value`
+
+### gte [value] (Any [Any] -> Boolean)
+ - check if `data` is greater than or equals `value`
+
+### lt [value] (Any [Any] -> Boolean)
+ - check if `data` is greater than `value`
+
+### lte [value] (Any [Any] -> Boolean)
+ - check if `data` is greater than or equals `value`
