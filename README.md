@@ -180,3 +180,36 @@ the template function should accept a `config.json` file defined as bellow
   "string_delimiter": "'"
 }
 ```
+
+## Api
+Any implementation should build this minimum api, be free to extend it!
+All necessary adaptions for a given programming language should be done with
+minimum changes in this api!
+
+### new(loader(src: String), config(data: Object))
+The constructor should accept two parameters:
+ - `loader` is a function that recieve the `src` path of a resource and
+responde with the resource.
+In our example `loader` should be invoked to resolve `data.json`
+
+ - `config` is the object with the engine configuration. The defaults should
+be just like the definition in section Config
+
+### filter(name: String, filter(data: String, arg: [String]))
+ - `name` is the name of filter, it would be nice to allow users redefine a
+filter using it old definition. 
+ - `filter` is a function that take the data passed to filter and an array of
+extra arguments and should respond the new data.
+
+## Filters
+Any implementation should implement all this filters for a given `data` input
+
+### has -> Boolean
+ - `data` is an `array` or `string` should resolve `true` if not empty `false` otherwise
+ - `data` is `null` should resove `false`
+ - `data` is `object` empty or not should always resolve `true`
+ - `data` is `boolean` should resolve itself
+ - `data` is number should resolve `false` if `zero`, `true` otherwise
+
+### not -> Boolean
+ - apply `has` on `data` and negate it
