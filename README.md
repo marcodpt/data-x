@@ -37,7 +37,7 @@ In all examples the json is stored in a `data.json` file
   "age": 45,
   "active": true,
   "balance": 5000,
-  "avatar": "<img src="john.jpg"/>"
+  "avatar": "<img src=\"john.jpg\"/>"
 }
 ```
 ```html
@@ -45,6 +45,8 @@ In all examples the json is stored in a `data.json` file
   <p>Name: {{x.name}}</p>
   <p data-x="x.active">Is active</p>
   <p data-x="x.active | not">Is not active</p>
+  <p data-x="x.age | gt 35">Is older than Mary</p>
+  <p data-x="x.age | lte 35">Is not older than Mary</p>
   <div data-x="x.avatar" />
   <p data-x="x.avatar | not">No avatar available!</p>
   <div data-x="x.thumbnail" />
@@ -55,6 +57,7 @@ In all examples the json is stored in a `data.json` file
 <div>
   <p>Name: John</p>
   <p>Is active</p>
+  <p>Is older than Mary</p>
   <div><img src="john.jpg"/></div>
   <p>No thumbnail available!</p>
 </div>
