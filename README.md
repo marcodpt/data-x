@@ -165,3 +165,18 @@ In all examples the json is stored in a `data.json` file
   </tr>
 </table>
 ```
+
+## Config
+the template function should accept a `config.json` file defined as bellow
+```json
+{
+  "attribute": "data-x",
+  "delimiter_start": "{{",
+  "delimiter_end": "}}",
+  "pipe_keyword": "|",
+  "assign_keyword": " as ",
+  "iterator_keyword": " in ",
+  "key_value_separator": ":",
+  "string_delimiter": "'"
+}
+```
