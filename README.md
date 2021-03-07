@@ -1,13 +1,17 @@
-# x-template
+# data-x
 A natural template engine language agnostic
 
-In all examples the json is stored in a data.json file
+## Examples
+In all examples the json is stored in a `data.json` file
+
 ### render a varible
 ```json
-{"name": "John"}
+{
+  "name": "John"
+}
 ```
 ```html
-<p data-x="data.json as x">Hello {{x.name}}!</p>
+<p data-x="'data.json' as x">Hello {{x.name}}!</p>
 ```
 ```html
 <p>Hello John!</p>
@@ -15,13 +19,45 @@ In all examples the json is stored in a data.json file
 
 ### render a varible with a filter
 ```json
-{"name": "John"}
+{
+  "name": "John"
+}
 ```
 ```html
-<p data-x="data.json as x">Hello {{x.name | upper}}!</p>
+<p data-x="'data.json' as x">Hello {{x.name | upper}}!</p>
 ```
 ```html
 <p>Hello JOHN!</p>
+```
+
+### conditionals and render
+```json
+{
+  "name": "John",
+  "age": 45,
+  "active": true,
+  "balance": 5000,
+  "avatar": "<img src="john.jpg"/>"
+}
+```
+```html
+<div data-x="'data.json' as x">
+  <p>Name: {{x.name}}</p>
+  <p data-x="x.active">Is active</p>
+  <p data-x="x.active | not">Is not active</p>
+  <div data-x="x.avatar" />
+  <p data-x="x.avatar | not">No avatar available!</p>
+  <div data-x="x.thumbnail" />
+  <p data-x="x.thumbnail | not">No thumbnail available!</p>
+</div>
+```
+```html
+<div>
+  <p>Name: John</p>
+  <p>Is active</p>
+  <div><img src="john.jpg"/></div>
+  <p>No thumbnail available!</p>
+</div>
 ```
 
 ### simple arrays
@@ -31,8 +67,8 @@ In all examples the json is stored in a data.json file
 }
 ```
 ```html
-<ul data-x="data.json">
-  <li data-x="person in persons">{{person}}</li>
+<ul data-x="'data.json' as x">
+  <li data-x="person in x.persons">{{person}}</li>
 </ul>
 ```
 ```html
@@ -47,25 +83,27 @@ In all examples the json is stored in a data.json file
 {
   "owner": {
     "info": {
-      "name": "John"
+      "name": "John",
       "age": 45
     }
   }
 }
 ```
 ```html
-<div data-x="data.json">
-  <p data-x="owner.info as p">
+<div data-x="'data.json' as x">
+  <p data-x="x.owner.info as p">
     Hello, my name is {{p.name}}.
     I am {{p.age}} years old.
   </p>
 </div>
 ```
 ```html
-<p>
-  Hello, my name is John.
-  I am 45 years old.
-</p>
+<div>
+  <p>
+    Hello, my name is John.
+    I am 45 years old.
+  </p>
+</div>
 ```
 
 ### complex arrays and objects
@@ -75,7 +113,7 @@ In all examples the json is stored in a data.json file
     {
       "name": "John",
       "age": 45,
-      "balance": "5000"
+      "balance": 5000
     }, {
       "name": "Mary",
       "age": 35
@@ -94,14 +132,14 @@ In all examples the json is stored in a data.json file
 }
 ```
 ```html
-<table data-x="data.json">
+<table data-x="'data.json' as x">
   <tr>
     <th>Id</th>
-    <th data-x="p in schema.properties">{{p.title}}</th>
+    <th data-x="p in x.schema.properties">{{p.title}}</th>
   </tr>
-  <tr data-x="id:person in persons">
+  <tr data-x="id:person in x.persons">
     <td>{{id | inc}}</td>
-    <td data-x="field:p in schema.properties">{{person[field]}}</td>
+    <td data-x="field:p in x.schema.properties">{{person[field]}}</td>
   </tr>
 </table>
 ```
