@@ -173,6 +173,8 @@ the template function should accept a `config.json` file defined as bellow
   "attribute": "data-x",
   "delimiter_start": "{{",
   "delimiter_end": "}}",
+  "eval_start": "[",
+  "eval_end": "]",
   "pipe_keyword": "|",
   "assign_keyword": " as ",
   "iterator_keyword": " in ",
@@ -191,7 +193,6 @@ The constructor should accept two parameters:
  - `loader` is a function that recieve the `src` path of a resource and
 responde with the resource.
 In our example `loader` should be invoked to resolve `data.json`
-
  - `config` is the object with the engine configuration. The defaults should
 be just like the definition in section Config
 
@@ -200,6 +201,11 @@ be just like the definition in section Config
 filter using it old definition. 
  - `filter` is a function that take the data passed to filter and an array of
 extra arguments and should respond the new data.
+
+### resolve(scope: Any, expression: String)
+ - `scope` is the current scope
+ - `expression` is a given expression
+This function should evaluate expression in a given scope and return data
 
 ## Filters
 Any implementation should implement all this filters for a given `data` input
@@ -230,7 +236,7 @@ Any implementation should implement all this filters for a given `data` input
  - check if `data` is greater than or equals `value`
 
 ### lt [value] (Any [Any] -> Boolean)
- - check if `data` is greater than `value`
+ - check if `data` is less than `value`
 
 ### lte [value] (Any [Any] -> Boolean)
- - check if `data` is greater than or equals `value`
+ - check if `data` is less than or equals `value`
