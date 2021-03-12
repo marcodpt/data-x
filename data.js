@@ -1,4 +1,4 @@
-[
+data = [
   {
     "_id": "6046b4758d3bfcb180f1a0f5",
     "index": 0,

@@ -10,12 +10,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js" integrity="sha512-DZqqY3PiOvTP9HkjIWgjO6ouCbq+dxqWoJZ/Q+zPYNHmlnI2dQnbJ5bxAHpAMw+LXRm4D72EIRXzvcHQtE8/VQ==" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
   <title>Framework</title>
 </head>
-<body>
+<body data-x="
+     get 'api/fichas?id={url.id}' 'fichas' |
+     get ''
+">
   <table
     class="table table-striped table-bordered table-hover table-center"
-    data-x="data.json as data"
+    data-x="get 'api/fichas' 'x' | log | get 'api/items?liberado=0' 'y'"
   >
     <thead>
       <th data-x="key in data[0]" class="align-middle text-center">
@@ -25,16 +30,15 @@
       </th>
     </thead>
     <tbody>
-      <tr data-x="row in data">
-        <td
-          data-x="key in data[0]"
-          class="align-middle"
-        >
-          {{row[key]}}
+      {{#row}}
+      <tr data-x="x | filter (prop 'name' | eq 'thomas')">
+        <meu-elemento data-x="$"></meu-elemento>
+        <td class="align-middle">
+          {{address}}
         </td>
       </tr>
+      {{/row}}
     </tbody>
   </table>
-  <script src="app.js"></script>
 </body>
 </html>
