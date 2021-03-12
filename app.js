@@ -133,19 +133,88 @@
       } else if (TOKEN_INTEGER.test(X)) {
         return parseInt(X)
       } else {
-        return scope[X]
+        return X.split(".").reduce(function (ret, x) {
+          return ret == null ? ret : ret[x]
+        }, scope)
       }
     }
 
     return resolve(R)
   }
 
-  window.R.x = data
-  console.log(expression(window.R, "x"))
-  console.log(expression(window.R, "x | length"))
-  console.log(expression(window.R, "x | nth 0 | keys | length"))
-  console.log(expression(window.R, "x | map (prop 'address')"))
-  console.log(expression(window.R, "x | map (prop 'address') | filter (contains ' Rowe,')"))
-  console.log(expression(window.R, "x | map (prop 'address') | filter (contains ' Rowe,') | nth 0"))
-  console.log(expression(window.R, "((x | map (prop 'address')) | filter (contains ' Rowe,')) | nth 0"))
+  const render = function (e) {
+    while (true) {
+      var x = e.querySelector('[data-x]')
+      if (x == null) {
+        break;
+      }
+      var expr = x.getAttribute('data-x')
+      var E = expr.split(':')
+      var a = E.shift().trim()
+      expr = E.join(':')
+      x.removeAttribute('data-x')
+      var old = scope[a]
+      var $ = expression(scope, expr)
+      if ($ == null || $ === false || $ === '') {
+        x.parentNode.removeChild(x)
+      } else if ($ instanceof Array) {
+        $.forEach(function (row) {
+          var nx = x.cloneNode(true)
+          x.parentNode.insertBefore(nx, x.nextSibiling)
+          scope[a] = row
+          render(nx)
+        })
+        x.parentNode.removeChild(x)
+      } else {
+        scope[a] = $
+        render(x)
+      }
+      scope[a] = old
+    }
+
+    var interpolate = function (scope, str) {
+      return str.replace(/{([^{}]*)}/g, function (raw, expr) {
+        var r = expression(scope, expr)
+        return String(r)
+      })
+    }
+
+    var nval = interpolate(scope, e.innerHTML)
+    if (nval != e.innerHTML) {
+      e.innerHTML = nval
+    }
+    for (var i = 0; i < e.attributes.length; i++) {
+      var attr = e.attributes[i]
+      if (attr.specified) {
+        var nval = interpolate(scope, attr.value).trim()
+        if (nval != attr.value) {
+          if (nval.length) {
+            e.setAttribute(attr.name, nval)
+          } else {
+            e.removeAttribute(attr.name)
+          }
+        }
+      }
+    }
+
+    console.log(e.outerHTML)
+  }
+
+  R._ = R.__
+  R.data = data
+
+  Object.keys(v).forEach(function (name) {
+    R[(R[name] == null ? '' : 'v_')+name] = R.curry(v[name])
+  })
+
+  console.log(expression(R, "data"))
+  console.log(expression(R, "data | length"))
+  console.log(expression(R, "data | nth 0 | keys | length"))
+  console.log(expression(R, "data | map (prop 'address')"))
+  console.log(expression(R, "data | map (prop 'address') | filter (contains ' Rowe,')"))
+  console.log(expression(R, "data | map (prop 'address') | filter (contains ' Rowe,') | nth 0"))
+  console.log(expression(R, "((data | map (prop 'address')) | filter (contains ' Rowe,')) | nth 0"))
+
+  var scope = R
+  render(document.body)
 })()
