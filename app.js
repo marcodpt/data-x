@@ -1,6 +1,7 @@
 (function () {
-  const expression = function (scope, str) {
-    console.log(str)
+  var dd = null
+
+  window.expression = function (scope, str) {
     const TOKEN_STRING = /'(?:[^'\\]|\\.)*'/g
     const TOKEN_NUMBER = /[+-]?([0-9]*[.])?[0-9]+/g
     const TOKEN_INTEGER = /[+-]?[0-9]+/g
@@ -52,7 +53,6 @@
       return merge(r.split(')'), ')')
     }).reduce(flat, [])
 
-    //console.log(JSON.stringify(R, undefined, 2))
     do {
       var p = -1
       var q = -1
@@ -96,11 +96,9 @@
           R.splice(p, 0, Y)
         }
       } 
-      //console.log(JSON.stringify(R, undefined, 2))
     } while (p != -1) 
 
     R = R[0]
-    //console.log(JSON.stringify(R, undefined, 2))
 
     const resolve = function (X) {
       if (is_arr(X)) {
@@ -142,9 +140,13 @@
     return resolve(R)
   }
 
-  const render = function (e) {
+  window.render = function (scope, element, target) {
+    if (target != null) {
+      element = element.cloneNode(true)
+    }
+
     while (true) {
-      var x = e.querySelector('[data-x]')
+      var x = element.querySelector('[data-x]')
       if (x == null) {
         break;
       }
@@ -153,7 +155,9 @@
       var a = E.shift().trim()
       expr = E.join(':')
       x.removeAttribute('data-x')
-      var old = scope[a]
+      if (a.length) {
+        var old = scope[a]
+      }
       var $ = expression(scope, expr)
       if ($ == null || $ === false || $ === '') {
         x.parentNode.removeChild(x)
@@ -161,60 +165,65 @@
         $.forEach(function (row) {
           var nx = x.cloneNode(true)
           x.parentNode.insertBefore(nx, x.nextSibiling)
-          scope[a] = row
-          render(nx)
+          if (a.length) {
+            scope[a] = row
+          }
+          render(scope, nx)
         })
         x.parentNode.removeChild(x)
       } else {
-        scope[a] = $
-        render(x)
+        if (a.length) {
+          scope[a] = $
+        }
+        render(scope, x)
       }
-      scope[a] = old
+      if (a.length) {
+        scope[a] = old
+      }
     }
 
     var interpolate = function (scope, str) {
       return str.replace(/{([^{}]*)}/g, function (raw, expr) {
+        expr = expr.trim()
+        raw = false
+        if (expr.substr(0, 1) == '@') {
+          expr = expr.substr(1).trim()
+          raw = true
+        }
         var r = expression(scope, expr)
-        return String(r)
+        return typeof scope.escape == 'function' && !raw ?
+          scope.escape(r) : String(r)
       })
     }
 
-    var nval = interpolate(scope, e.innerHTML)
-    if (nval != e.innerHTML) {
-      e.innerHTML = nval
+    var nval = interpolate(scope, element.innerHTML)
+    if (nval != element.innerHTML) {
+      element.innerHTML = nval
     }
-    for (var i = 0; i < e.attributes.length; i++) {
-      var attr = e.attributes[i]
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i]
       if (attr.specified) {
         var nval = interpolate(scope, attr.value).trim()
         if (nval != attr.value) {
           if (nval.length) {
-            e.setAttribute(attr.name, nval)
+            element.setAttribute(attr.name, nval)
           } else {
-            e.removeAttribute(attr.name)
+            element.removeAttribute(attr.name)
           }
         }
       }
     }
 
-    console.log(e.outerHTML)
+    if (target) {
+      if (dd == null && window['diffDOM'] != null) {
+        dd = new diffDOM.DiffDOM()
+      }
+      if (dd != null) {
+        diff = dd.diff(target, element)
+        dd.apply(target, diff)
+      } else {
+        target.innerHTML = element.innerHTML
+      }
+    }
   }
-
-  R._ = R.__
-  R.data = data
-
-  Object.keys(v).forEach(function (name) {
-    R[(R[name] == null ? '' : 'v_')+name] = R.curry(v[name])
-  })
-
-  console.log(expression(R, "data"))
-  console.log(expression(R, "data | length"))
-  console.log(expression(R, "data | nth 0 | keys | length"))
-  console.log(expression(R, "data | map (prop 'address')"))
-  console.log(expression(R, "data | map (prop 'address') | filter (contains ' Rowe,')"))
-  console.log(expression(R, "data | map (prop 'address') | filter (contains ' Rowe,') | nth 0"))
-  console.log(expression(R, "((data | map (prop 'address')) | filter (contains ' Rowe,')) | nth 0"))
-
-  var scope = R
-  render(document.body)
 })()

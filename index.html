@@ -11,14 +11,16 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/voca/1.4.0/voca.min.js" integrity="sha512-yrLbujQF3UPLrlaavtewYmv7OFD8AGO5PS8jg0VKlXP8kW9POHaG/bbpwSbpkqe4SCXVwTtYAMsKdOukT11bxQ==" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/gh/fiduswriter/diffDOM@4.2.2/browser/diffDOM.min.js"></script>
   <script src="data.js"></script>
+  <script src="app.js"></script>
   <title>Framework</title>
 </head>
 <body>
   <table class="table table-striped table-bordered table-hover table-center">
     <thead>
       <th
-        data-x="field: data | nth 0 | keys"
+        data-x="field: data | R.nth 0 | R.keys"
         class="align-middle text-center"
       >
         <a onclick="set('sort', '{field}')" style="cursor:pointer">
@@ -29,14 +31,14 @@
     <tbody>
       <tr data-x="row: data">
         <td
-          data-x="field: data | nth 0 | keys"
+          data-x="field: data | R.nth 0 | R.keys"
           class="align-middle"
         >
-          {row | prop field}
+          { @row | R.prop field }
         </td>
       </tr>
     </tbody>
   </table>
-  <script src="app.js"></script>
+  <script src="test.js"></script>
 </body>
 </html>
